@@ -9,3 +9,15 @@
   * `pip install tqdm colorlog`
 
 ## Usage
+
+### 1. prepare data
+
+To process bAbI story-based QA dataset, run:
+```
+$ python preprocessor.py --data story
+```
+
+To process bAbI dialog dataset, run:
+```
+$ python preprocessor.py --data dialog
+```
