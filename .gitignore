@@ -1,0 +1,14 @@
+babi_dialog_pkl
+dialog_processed_task_1
+dialog_processed_task_2
+dialog_processed_task_3
+dialog_processed_task_4
+dialog_processed_task_5
+dialog_oov_processed_task_1
+dialog_oov_processed_task_2
+dialog_oov_processed_task_3
+dialog_oov_processed_task_4
+dialog_oov_processed_task_5
+story_processed
+__pycache__
+conf*.txt
