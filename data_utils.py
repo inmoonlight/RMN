@@ -91,7 +91,7 @@ def load_dialog_task(data_dir, task_id, candid_dic, isOOV=False):
     '''Load the nth task. 
     Returns a tuple containing the training and testing data for the task.
     '''
-    assert task_id > 0 and task_id < 7
+    assert task_id > 0 and task_id < 6
 
     files = os.listdir(data_dir)
     files = [os.path.join(data_dir, f) for f in files]

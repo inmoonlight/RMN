@@ -27,7 +27,7 @@ class Preprocess:
             self.train_paths = None
             self.val_paths = None
             self.test_paths = None
-            self.path_to_processed = './story_processed'
+            self.path_to_processed = './babi_story/story_processed'
             self._cqa_word_set = set()
             self.c_max_len = 0
             self.s_max_len = 0
@@ -49,10 +49,10 @@ class Preprocess:
 
                     if self.is_oov:
                         filename_data, filename_meta = self.task + "_oov.data.pkl", self.task + "_oov.metadata.pkl"
-                        self.path_to_processed = './dialog_oov_processed_task_' + str(self.task)
+                        self.path_to_processed = './babi_dialog/dialog_oov_processed_task_' + str(self.task)
                     else:
                         filename_data, filename_meta = self.task + ".data.pkl", self.task + ".metadata.pkl"
-                        self.path_to_processed = './dialog_processed_task_' + str(self.task)
+                        self.path_to_processed = './babi_dialog/dialog_processed_task_' + str(self.task)
 
                     if not os.path.exists(self.path_to_processed):
                         os.makedirs(self.path_to_processed)
@@ -88,7 +88,7 @@ class Preprocess:
         self.load_val()
         self.load_test()
         ### write data info to config.txt
-        with open('config.txt', 'w') as f:
+        with open(os.path.join('./babi_story', 'config.txt'), 'w') as f:
             f.write(str(self.c_max_len) + "\t")
             f.write(str(self.s_max_len) + "\t")
             f.write(str(self.q_max_len) + "\t")
@@ -499,7 +499,7 @@ class Preprocess:
 
         ### write data info to config_taskID.txt
         if self.is_oov:
-            with open('config_oov_' + self.task + '.txt', 'w') as f:
+            with open(os.path.join('./babi_dialog', 'config_oov_' + self.task + '.txt'), 'w') as f:
                 f.write(str(self.memory_size) + '\t')
                 f.write(str(self.sentence_size) + '\t')
                 f.write(str(self.candidate_sentence_size) + '\t')
@@ -508,7 +508,7 @@ class Preprocess:
                 f.write(str(self.path_to_processed) + '\t')
                 f.write(str(_TYPE_NUM) + '\t')
         else:
-            with open('config_' + self.task + '.txt', 'w') as f:
+            with open(os.path.join('./babi_dialog', 'config_' + self.task + '.txt'), 'w') as f:
                 f.write(str(self.memory_size) + '\t')
                 f.write(str(self.sentence_size) + '\t')
                 f.write(str(self.candidate_sentence_size) + '\t')
