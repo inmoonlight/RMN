@@ -8,10 +8,10 @@ from tensorflow.contrib.layers import fully_connected
 
 
 class Module():
-    def __init__(self, config_txt, g_theta_layers, f_phi_layers, seed=9, word_embed=32, hidden_dim=32):
+    def __init__(self, config_txt, g_theta_layers, f_phi_layers, seed=9, word_embed=32, hidden_dim=32, batch_size=64):
         self.g_theta_layers = g_theta_layers
         self.f_phi_layers = f_phi_layers
-        self.batch_size = config_txt['batch_size']
+        self.batch_size = batch_size
         self.seed = seed
         self.c_max_len = config_txt['c_max_len']  # 130
         self.s_max_len = config_txt['s_max_len']  # 12

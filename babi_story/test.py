@@ -11,8 +11,6 @@ from utils import read_data, batch_iter_test, parse_config, read_data_test
 
 def run(config):
     meta = config.metagraph
-    with open('config.txt', 'r') as f:
-        config_txt = parse_config(f.readline())
     checkpoint = '/'.join(meta.split('/')[:-1])
 
     [test_q, test_a, test_a_num, test_c, test_l, test_c_real_len, test_q_real_len,

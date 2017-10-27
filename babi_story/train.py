@@ -18,7 +18,7 @@ def run(config):
     batch_size = config.batch_size
     lr = config.learning_rate
 
-    with open('config.txt', 'r') as f:
+    with open('babi_story/config.txt', 'r') as f:
         config_txt = parse_config(f.readline())
 
     save_dir = "./result/babi_story/"
@@ -37,7 +37,7 @@ def run(config):
         max_acc = 0
         with sess.as_default():
             tf.set_random_seed(seed)
-            m = RMN(config_txt, seed=seed, word_embed_dim=word_embed_dim, hidden_dim=hidden_dim)
+            m = RMN(config, config_txt, seed=seed, word_embed_dim=word_embed_dim, hidden_dim=hidden_dim)
             pred, correct, accuracy, loss = m.run()
 
             # Define Training procedure
@@ -53,9 +53,6 @@ def run(config):
             loss_val = tf.summary.scalar("loss_val", loss)
             accuracy_val = tf.summary.scalar("accuracy_val", accuracy)
             val_summary_ops = tf.summary.merge([loss_val, accuracy_val])
-
-            tf.add_to_collection("alpha_1", m.alpha_1)
-            tf.add_to_collection("alpha_2", m.alpha_2)
 
             saver = tf.train.Saver(tf.global_variables(), max_to_keep=2)
             sess.run(tf.global_variables_initializer())
