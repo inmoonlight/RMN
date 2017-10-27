@@ -162,9 +162,9 @@ def main():
     result['alpha_1'] = model_alpha_1[: (num//batch_size)*batch_size] + model_alpha_1[-(num%batch_size):]
     result['alpha_2'] = model_alpha_2[: (num//batch_size)*batch_size] + model_alpha_2[-(num%batch_size):]
 
-    tasks = [7, 2, 6, 11, 3, 4, 8, 16, 10, 17, 20, 1, 5, 19, 18, 9, 12, 13, 15, 14]
+    tasks = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 1, 20, 2, 3, 4, 5, 6, 7, 8, 9]
     splits = np.cumsum(
-        [0, 995, 995, 995, 995, 995, 999, 995, 999, 995, 992, 993, 995, 995, 999, 997, 995, 995, 995, 996, 995])
+        [0, 995, 995, 995, 995, 995, 996, 999, 992, 997, 999, 995, 993, 995, 995, 999, 995, 995, 995, 995, 995])
     splited_result = [result[splits[i]:splits[i + 1]] for i in range(len(splits) - 1)]
     for task_result, task_num in zip(splited_result, tasks):
         print("task {0} acc: {1:.4f} %".format(task_num, (sum(task_result.score) / len(task_result) * 100)))
