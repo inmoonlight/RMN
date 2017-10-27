@@ -26,14 +26,17 @@ $ python preprocessor.py --data dialog
 
 To train RMN on bAbI story-based QA dataset, run:
 ```
-$ python ./babi_story/train.py
+$ python ./babi_story/train.py  
 ```
-
 To train RMN on bAbI dialog dataset task 4, run:
 ```
-$ python ./babi_dialog/train.py --task 4
+$ python ./babi_dialog/train.py --task 4 --embedding concat --word_embed_dim 50
 ```
 To use match, use_match flag is required:
 ```
-$ python ./babi_dialog/train.py --task 4 --use_match True
+$ python ./babi_dialog/train.py --task 4 --use_match True --embedding concat --word_embed_dim 50
+```
+To test on OOV dataset, is_oov flag is required:
+```
+$ python ./babi_dialog/train.py --task 4 --is_oov True --embedding concat --word_embed_dim 50
 ```
