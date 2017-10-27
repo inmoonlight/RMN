@@ -1,11 +1,7 @@
 import numpy as np
 import os
 import pickle
-import sys
 
-sys.path.append('../../')
-
-import alarm
 from util import log
 
 _TYPE_NUM = None
@@ -13,7 +9,7 @@ _TYPE_NUM = None
 
 def parse_config_txt(path_to_config):
     config = dict()
-    with open(path_to_config, 'r') as f:
+    with open(os.path.join('babi_dialog', path_to_config), 'r') as f:
         text = f.readline().split('\t')
         config['memory_size'] = int(text[0])
         config['sentence_size'] = int(text[1])
@@ -50,8 +46,7 @@ def load_data(task, type):
     return dataset
 
 
-def batch_iter(task_idx, c, c_real_len, q, q_real_len, cand, match_words, a_idx, shuffle,
-               batch_size, num_epochs, version, is_alarm):
+def batch_iter(c, c_real_len, q, q_real_len, cand, match_words, a_idx, shuffle, batch_size, num_epochs):
     c = np.array(c)
     c_real_len = np.array(c_real_len)
     q = np.array(q)
@@ -62,16 +57,8 @@ def batch_iter(task_idx, c, c_real_len, q, q_real_len, cand, match_words, a_idx,
     data_size = len(q)
     num_batches_per_epoch = int(data_size / batch_size) + 1
     for epoch in range(num_epochs):
-        if is_alarm:
-            try:
-                alarm.send_message(
-                    'bAbI dialog model-v.{} task {} training... epoch {}'.format(version, task_idx, epoch + 1),
-                    channel='babi_dialog')
-            except:
-                pass
         log.infov("In epoch >> {}".format(epoch + 1))
         log.info("num batches per epoch is : {}".format(num_batches_per_epoch))
-
         if shuffle:
             shuffle_indices = np.random.permutation(np.arange(data_size))
             c_shuffled = c[shuffle_indices]
