@@ -6,7 +6,7 @@ import re
 
 from tqdm import tqdm
 
-from util import log
+from babi_dialog.util import log
 
 ## match type for babi dialog task
 _CUISINE = ['british', 'cantonese', 'french', 'indian', 'italian', 'japanese', 'korean', 'spanish', 'thai',

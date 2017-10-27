@@ -93,7 +93,6 @@ class RMN:
         pred = md.f_phi(input_,activation=tf.nn.relu, reuse=False, with_embed_matrix=True,
                             is_concat=True, use_match=self.use_match, phase=self.is_training)
         correct, accuracy, loss, sim_score, p, a = md.get_corr_acc_loss(pred, self.answer, self.answer_match, self.answer_idx,
-                                                                        with_position_encoding=False,
                                                                         with_embed_matrix=True, is_concat=True,
                                                                         use_match=self.use_match, is_cosine_sim=True)
         return pred, correct, accuracy, loss, sim_score, p, a

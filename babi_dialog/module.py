@@ -27,7 +27,6 @@ class Module:
         self.word_embed_dim = config.word_embed_dim
         self.hidden_dim = config.hidden_dim
         self.word_embed_matrix = self.embed_matrix()
-        self.encoding = tf.constant(self.position_encoding(self.s_max_len, self.word_embed_dim), name='encoding')
 
     def embed_matrix(self):
         word_embed_matrix = tf.Variable(tf.random_uniform(shape=[self.vocab_size, self.word_embed_dim], minval=-1,
@@ -50,22 +49,7 @@ class Module:
             outputs.append(fc_output)
         return outputs[-1]
 
-    def position_encoding(self, sentence_size, embedding_size):
-        """
-        Position Encoding described in section MemNet 4.1 [1]
-        """
-        encoding = np.ones((embedding_size, sentence_size), dtype=np.float32)
-        ls = sentence_size + 1
-        le = embedding_size + 1
-        for i in range(1, le):
-            for j in range(1, ls):
-                encoding[i - 1, j - 1] = (i - (embedding_size + 1) / 2) * (j - (sentence_size + 1) / 2)
-        encoding = 1 + 4 * encoding / embedding_size / sentence_size
-        # Make position encoding of time words identity to avoid modifying them
-        encoding[:, -1] = 1.0
-        return np.transpose(encoding)
-
-    def contextSum(self, c, scope='contextSum', with_embed_matrix=True, with_position_encoding=False):
+    def contextSum(self, c, scope='contextSum', with_embed_matrix=True):
         sentences = tf.reshape(c, shape=[-1, self.s_max_len])
 
         with tf.variable_scope(scope):
@@ -74,15 +58,11 @@ class Module:
             else:
                 embedded_s_word = tf.one_hot(indices=sentences, depth=self.vocab_size)
 
-            if with_position_encoding:
-                s_sum = tf.reduce_sum(embedded_s_word * self.encoding, axis=1)
-            else:
-                s_sum = tf.reduce_sum(embedded_s_word, axis=1)
-
+            s_sum = tf.reduce_sum(embedded_s_word, axis=1)
             c_embedded = tf.reshape(s_sum, shape=[self.batch_size, self.c_max_len, -1])
         return tf.unstack(c_embedded, axis=1)
 
-    def contextConcat(self, c, scope='contextConcat', with_embed_matrix=True, with_position_encoding=False):
+    def contextConcat(self, c, scope='contextConcat', with_embed_matrix=True):
         sentences = tf.reshape(c, shape=[-1, self.s_max_len])
 
         with tf.variable_scope(scope):
@@ -91,38 +71,28 @@ class Module:
             else:
                 embedded_s_word = tf.one_hot(indices=sentences, depth=self.vocab_size)
 
-            if with_position_encoding:
-                s_concat = tf.concat(tf.unstack(embedded_s_word * self.encoding, axis=1), axis=1)
-            else:
-                s_concat = tf.concat(tf.unstack(embedded_s_word, axis=1), axis=1)
-
+            s_concat = tf.concat(tf.unstack(embedded_s_word, axis=1), axis=1)
             c_embedded = tf.reshape(s_concat, shape=[self.batch_size, self.c_max_len, -1])
         return tf.unstack(c_embedded, axis=1)
 
-    def questionSum(self, q, scope='questionSum', with_embed_matrix=True, with_position_encoding=False):
+    def questionSum(self, q, scope='questionSum', with_embed_matrix=True):
         with tf.variable_scope(scope):
             if with_embed_matrix:
                 embedded_q_word = tf.nn.embedding_lookup(self.word_embed_matrix, q)
             else:
                 embedded_q_word = tf.one_hot(indices=q, depth=self.vocab_size)
 
-            if with_position_encoding:
-                q_sum = tf.reduce_sum(embedded_q_word * self.encoding, axis=1)
-            else:
-                q_sum = tf.reduce_sum(embedded_q_word, axis=1)
+            q_sum = tf.reduce_sum(embedded_q_word, axis=1)
         return q_sum
 
-    def questionConcat(self, q, scope='questionConcat', with_embed_matrix=True, with_position_encoding=False):
+    def questionConcat(self, q, scope='questionConcat', with_embed_matrix=True):
         with tf.variable_scope(scope):
             if with_embed_matrix:
                 embedded_q_word = tf.nn.embedding_lookup(self.word_embed_matrix, q)
             else:
                 embedded_q_word = tf.one_hot(indices=q, depth=self.vocab_size)
 
-            if with_position_encoding:
-                q_concat = tf.concat(tf.unstack(embedded_q_word * self.encoding, axis=1), axis=1)
-            else:
-                q_concat = tf.concat(tf.unstack(embedded_q_word, axis=1), axis=1)
+            q_concat = tf.concat(tf.unstack(embedded_q_word, axis=1), axis=1)
         return q_concat
 
     def g_theta(self, z, phase=True, activation=tf.nn.tanh, reuse=True, scope=""):
@@ -189,7 +159,7 @@ class Module:
                     pred = self.fc_module(f_output, [self.vocab_size], activation=None, phase=phase)
         return pred
 
-    def answerSum(self, a, scope='answerSum', with_embed_matrix=True, with_position_encoding=False):
+    def answerSum(self, a, scope='answerSum', with_embed_matrix=True):
         """
         Args
             a: zero padded answers, shape=[batch_size, answer_size, a_max_len]
@@ -207,15 +177,11 @@ class Module:
             else:
                 embedded_a_word = tf.one_hot(indices=answers, depth=self.vocab_size)
 
-            if with_position_encoding:
-                encoding = tf.constant(self.position_encoding(self.a_max_len, self.word_embed_dim), name='encoding')
-                a_sum = tf.reduce_sum(embedded_a_word * encoding, axis=1)  # [batch_size*answer_size, embedding_dim]
-            else:
-                a_sum = tf.reduce_sum(embedded_a_word, axis=1)  # [batch_size*answer_size, embedding_dim]
+            a_sum = tf.reduce_sum(embedded_a_word, axis=1)  # [batch_size*answer_size, embedding_dim]
 
         return tf.reshape(a_sum, shape=[self.batch_size, self.cand_size, -1])
 
-    def answerConcat(self, a, scope='answerConcat', with_embed_matrix=True, with_position_encoding=False):
+    def answerConcat(self, a, scope='answerConcat', with_embed_matrix=True):
         """
         Args
             a: zero padded answers, shape=[batch_size, answer_size, a_max_len]
@@ -233,25 +199,17 @@ class Module:
             else:
                 embedded_a_word = tf.one_hot(indices=answers, depth=self.vocab_size)
 
-            if with_position_encoding:
-                encoding = tf.constant(self.position_encoding(self.a_max_len, self.word_embed_dim), name='encoding')
-                a_concat = tf.concat(tf.unstack(embedded_a_word * encoding, axis=1),
-                                     axis=1)  # [batch_size*answer_size, embedding_dim]
-            else:
-                a_concat = tf.concat(tf.unstack(embedded_a_word, axis=1),
-                                     axis=1)  # [batch_size*answer_size, embedding_dim]
+            a_concat = tf.concat(tf.unstack(embedded_a_word, axis=1), axis=1)  # [batch_size*answer_size, embedding_dim]
 
         return tf.reshape(a_concat, shape=[self.batch_size, self.cand_size, -1])
 
-    def get_corr_acc_loss(self, prediction, a, a_match, answer_idx, with_position_encoding=False,
-                          with_embed_matrix=True, is_concat=True, use_match=False, is_cosine_sim=True):
+    def get_corr_acc_loss(self, prediction, a, a_match, answer_idx, with_embed_matrix=True, is_concat=True, use_match=False, is_cosine_sim=True):
         tf.add_to_collection("prediction", prediction)  # [batch_size, hidden_dim]
         prediction = tf.expand_dims(prediction, axis=1)
         if is_concat:
-            embedded_a = self.answerConcat(a, with_position_encoding=with_position_encoding)
+            embedded_a = self.answerConcat(a)
         else:
-            embedded_a = self.answerSum(a, with_position_encoding=with_position_encoding,
-                                        with_embed_matrix=with_embed_matrix)
+            embedded_a = self.answerSum(a, with_embed_matrix=with_embed_matrix)
 
         prediction = tf.nn.l2_normalize(prediction, dim=2)  # [batch_size, 1, hidden_dim]
         embedded_a = tf.nn.l2_normalize(embedded_a, dim=2)  # [batch_size, answer_size, hidden_dim]
