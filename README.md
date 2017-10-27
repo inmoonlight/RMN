@@ -37,3 +37,7 @@ To use match, use_match flag is required:
 ```
 $ python ./babi_dialog/train.py --task 4 --use_match True
 ```
+To test on OOV dataset, is_oov flag is required:
+```
+$ python ./babi_dialog/train.py --task 4 --is_oov True
+```
