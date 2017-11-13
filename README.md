@@ -1,6 +1,38 @@
 # Related Memory Network (RMN)
+* End-to-End neural network architecture exploiting both memory network and relation network structures 
+* **State-of-the-art result** in jointly trained bAbI-10k story-based question answering
+
 
 <img src = "./figure/RMN.png" width="850">
+
+
+![RMN](RMN.png)
+
+## Result
+|     Task     | MemN2N | DMN+ |  RN  |  **RMN** |
+|:------------:|:------:|:----:|:----:|:----:|
+|       1      |   0.0  |  0.0 |  0.0 |  0.0 |
+|       2      |   0.3  |  0.3 |  **6.5** |  0.5 |
+|       3      |   **9.3**  |  1.1 | **12.9** | **14.7** |
+|       4      |   0.0  |  0.0 |  0.0 |  0.0 |
+|       5      |   0.6  |  0.5 |  0.5 |  0.4 |
+|       6      |   0.0  |  0.0 |  0.0 |  0.0 |
+|       7      |   3.7  |  2.4 |  0.2 |  0.5 |
+|       8      |   0.8  |  0.0 |  0.1 |  0.3 |
+|       9      |   0.8  |  0.0 |  0.0 |  0.0 |
+|      10      |   2.4  |  0.0 |  0.0 |  0.0 |
+|      11      |   0.0  |  0.0 |  0.4 |  0.5 |
+|      12      |   0.0  |  0.0 |  0.0 |  0.0 |
+|      13      |   0.0  |  0.0 |  0.0 |  0.0 |
+|      14      |   0.0  |  0.0 |  0.0 |  0.0 |
+|      15      |   0.0  |  0.0 |  0.0 |  0.0 |
+|      16      |   0.4  | **45.3** | **50.3** |  0.9 |
+|      17      |  **40.7**  |  4.2 |  0.9 |  0.3 |
+|      18      |   **6.7**  |  2.1 |  0.6 |  2.3 |
+|      19      |  **66.5**  |  0.0 |  2.1 |  2.9 |
+|      20      |   0.0  |  0.0 |  0.0 |  0.0 |
+|  Mean error  |   6.6  |  2.8 |  3.7 |  **1.2** |
+| Failed tasks |    4   |   **1**  |   3  |   **1**  |
 
 ## Prerequisites
 * Python 3.6
