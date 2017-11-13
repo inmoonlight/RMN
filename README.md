@@ -6,8 +6,6 @@
 <img src = "./figure/RMN.png" width="850">
 
 
-![RMN](RMN.png)
-
 ## Result
 |     Task     | MemN2N | DMN+ |  RN  |  **RMN** |
 |:------------:|:------:|:----:|:----:|:----:|
